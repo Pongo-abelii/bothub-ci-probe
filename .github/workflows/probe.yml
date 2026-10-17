@@ -1,0 +1,29 @@
+name: probe
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Runner info
+        run: |
+          uname -a
+          echo "cpu=$(nproc)"
+          free -m | sed -n '2p'
+          df -h / | tail -1
+
+      - name: Make artifact
+        run: |
+          date -u +%FT%TZ > out.txt
+          echo "remote build ok" >> out.txt
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: probe-out
+          path: out.txt
